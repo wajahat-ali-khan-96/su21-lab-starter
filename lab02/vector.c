@@ -19,36 +19,36 @@ static void allocation_failed() {
 }
 
 /* Bad example of how to create a new vector */
-vector_t *bad_vector_new() {
-    /* Create the vector and a pointer to it */
-    vector_t *retval, v;
-    retval = &v;
+// vector_t *bad_vector_new() {
+//     /* Create the vector and a pointer to it */
+//     vector_t *retval, v;
+//     retval = &v;
 
-    /* Initialize attributes */
-    retval->size = 1;
-    retval->data = malloc(sizeof(int));
-    if (retval->data == NULL) {
-        allocation_failed();
-    }
+//     /* Initialize attributes */
+//     retval->size = 1;
+//     retval->data = malloc(sizeof(int));
+//     if (retval->data == NULL) {
+//         allocation_failed();
+//     }
 
-    retval->data[0] = 0;
-    return retval;
-}
+//     retval->data[0] = 0;
+//     return retval;
+// }
 
 /* Another suboptimal way of creating a vector */
-vector_t also_bad_vector_new() {
-    /* Create the vector */
-    vector_t v;
+// vector_t also_bad_vector_new() {
+//     /* Create the vector */
+//     vector_t v;
 
-    /* Initialize attributes */
-    v.size = 1;
-    v.data = malloc(sizeof(int));
-    if (v.data == NULL) {
-        allocation_failed();
-    }
-    v.data[0] = 0;
-    return v;
-}
+//     /* Initialize attributes */
+//     v.size = 1;
+//     v.data = malloc(sizeof(int));
+//     if (v.data == NULL) {
+//         allocation_failed();
+//     }
+//     v.data[0] = 0;
+//     return v;
+// }
 
 /* Create a new vector with a size (length) of 1 and set its single component to zero... the
    right way */

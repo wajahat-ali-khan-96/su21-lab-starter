@@ -17,7 +17,7 @@ main:
 
     # Load the address of the "square" function into a1 (hint: check out "la" on the green sheet)
     ### YOUR CODE HERE ###
-
+    la a1,square # first edit
 
     # Issue the call to map
     jal ra, map
@@ -33,10 +33,10 @@ main:
 
     # Load function arguments
     add a0, s0, x0 # Loads the address of the first node into a0
-    
+
     # Load the address of the "decrement" function into a1 (should be very similar to before)
     ### YOUR CODE HERE ###
-
+    la a1,decrement  # second edit
 
     # Issue the call to map
     jal ra, map
@@ -52,11 +52,15 @@ main:
 map:
     # Prologue: Make space on the stack and back-up registers
     ### YOUR CODE HERE ###
+    addi sp,sp,-4        # 2 words are reserved on stack
+    sw ra,0(sp)          # ra is push on stack so that when we return from another function, previous return address is saved on stack to return
+    sw s0,4(sp)          # s0 is push on stack so that head of the default list will remain in s0
 
+op:
     beq a0, x0, done # If we were given a null pointer (address 0), we're done.
 
     add s0, a0, x0 # Save address of this node in s0
-    add s1, a1, x0 # Save address of function in s1
+    add s1, a1, x0 # Save address of square function in s1
 
     # Remember that each node is 8 bytes long: 4 for the value followed by 4 for the pointer to next.
     # What does this tell you about how you access the value and how you access the pointer to next?
@@ -64,30 +68,47 @@ map:
     # Load the value of the current node into a0
     # THINK: Why a0?
     ### YOUR CODE HERE ###
+    lw a0,0(s0)   # a0 will now hold the value and s0 will now hold the address of the next node from now on this map function.
 
     # Call the function in question on that value. DO NOT use a label (be prepared to answer why).
     # Hint: Where do we keep track of the function to call? Recall the parameters of "map".
     ### YOUR CODE HERE ###
+    jalr s1 # As we store the address of the function in s1, it means by using address stored in s1 we can go to the function,
+                    #Now we dont need to use label of function like square beacuase by adding 0 in s1 we can go to square function using jalr and return here again using ra.
 
     # Store the returned value back into the node
     # Where can you assume the returned value is?
     ### YOUR CODE HERE ###
+    sw a0,0(s0) # we are using a0 to hold the  return value as its naming convention and it will store in the address saved in s0
 
     # Load the address of the next node into a0
     # The address of the next node is an attribute of the current node.
     # Think about how structs are organized in memory.
     ### YOUR CODE HERE ###
-
+    lw a0,4(s0)     # s0 holds the address of node where each node is 8 bytes long: 4 for the value followed by 4 for the pointer to next so we add offset 4 in s0 to get next address
+   # beq a0,x0,else
+   # li t1,8
+   # sub s0,s0,t1
+   # add a0,s0,x0   
+   # addi a1,s1,0
+    #j map
+# else:
+    # add a0,x0,x0
     # Put the address of the function back into a1 to prepare for the recursion
     # THINK: why a1? What about a0?
     ### YOUR CODE HERE ###
+    addi a1,s1,0    # a1 is used in main to hold the address of function whereas a0 is used to hold the address of node
 
     # Recurse
     ### YOUR CODE HERE ###
+    j op       # This will call the op function again.
 
 done:
     # Epilogue: Restore register values and free space from the stack
     ### YOUR CODE HERE ###
+    lw s0,4(sp)     # free space of s0
+    lw ra,0(sp)     # free space of ra
+    addi sp,sp,4    # space free on stack
 
     jr ra # Return to caller
 
@@ -151,3 +172,4 @@ malloc:
     addi a0, x0, 9
     ecall
     jr ra
+
