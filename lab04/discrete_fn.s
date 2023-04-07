@@ -16,6 +16,7 @@ main:
     jal print_str
     li a0, -3
     la a1, output
+ #   addi s3,x0,0
     jal f               # evaluate f(-3); should be 6
     jal print_int
     jal print_newline
@@ -23,31 +24,35 @@ main:
     la a0, neg2
     jal print_str
     li a0, -2
-    la a1, output
+    la a1, output  
+    addi a1,a1,4
     jal f               # evaluate f(-2); should be 61
     jal print_int
     jal print_newline
-
+    
     la a0, neg1
     jal print_str
     li a0, -1
     la a1, output
+    addi a1,a1,8
     jal f               # evaluate f(-1); should be 17
     jal print_int
     jal print_newline
-
+    
     la a0, zero
     jal print_str
     li a0, 0
     la a1, output
+    addi a1,a1,12
     jal f               # evaluate f(0); should be -38
     jal print_int
     jal print_newline
-
+    
     la a0, pos1
     jal print_str
     li a0, 1
     la a1, output
+    addi a1,a1,16
     jal f               # evaluate f(1); should be 19
     jal print_int
     jal print_newline
@@ -55,7 +60,8 @@ main:
     la a0, pos2
     jal print_str
     li a0, 2
-    la a1, output
+    la a1, output 
+    addi a1,a1,20
     jal f               # evaluate f(2); should be 42
     jal print_int
     jal print_newline
@@ -64,6 +70,7 @@ main:
     jal print_str
     li a0, 3
     la a1, output
+    addi a1,a1,24
     jal f               # evaluate f(3); should be 5
     jal print_int
     jal print_newline
@@ -77,7 +84,12 @@ main:
 # Think: why might having a1 be useful?
 f:
     # YOUR CODE GOES HERE!
-
+   
+    
+  #  addi a1,s3,0
+    lw a0,0(a1)
+  #  addi s3,s3,4
+    
     jr ra               # Always remember to jr ra after your function!
 
 print_int:

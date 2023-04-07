@@ -50,12 +50,14 @@ map:
     sw ra, 0(sp)
     sw s1, 4(sp)
     sw s0, 8(sp)
-
+op:
     beq a0, x0, done    # if we were given a null pointer, we're done.
 
     add s0, a0, x0      # save address of this node in s0
     add s1, a1, x0      # save address of function in s1
     add t0, x0, x0      # t0 is a counter
+    addi t4,x0,4        # need to intialize a variable with 4 to get multiple of 4 words access
+    addi t6,x0,0         #increment of array address #mistake 1
 
     # remember that each node is 12 bytes long:
     # - 4 for the array pointer
@@ -66,27 +68,31 @@ map:
     # are modified by the callees, even when we know the content inside the functions 
     # we call. this is to enforce the abstraction barrier of calling convention.
 mapLoop:
-    add t1, s0, x0      # load the address of the array of current node into t1
+    lw t1,0(s0)      # load the address of the array of current node into t1 #  mistake 2
     lw t2, 4(s0)        # load the size of the node's array into t2
-
-    add t1, t1, t0      # offset the array address by the count
+    mul t6,t4,t0
+    add t1, t1, t6      # offset the array address by the count #mistake
+    #add t1,t1,t0
     lw a0, 0(t1)        # load the value at that address into a0
 
     jalr s1             # call the function on that value.
 
+   #add t1,t1,t0
     sw a0, 0(t1)        # store the returned value back into the array
+    
     addi t0, t0, 1      # increment the count
     bne t0, t2, mapLoop # repeat if we haven't reached the array size yet
 
-    la a0, 8(s0)        # load the address of the next node into a0
-    lw a1, 0(s1)        # put the address of the function back into a1 to prepare for the recursion
+    lw a0,8(s0)       # load the address of the next node into a0
+    add a1,s1,x0        # put the address of the function back into a1 to prepare for the recursion  #mistake 5
 
-    jal  map            # recurse
+    jal  op            # recurse
 done:
     lw s0, 8(sp)
     lw s1, 4(sp)
     lw ra, 0(sp)
     addi sp, sp, 12
+    jr ra  # mistake 6
 
 print_newline:
     li a1, '\n'
@@ -95,8 +101,8 @@ print_newline:
     jr ra
 
 mystery:
-    mul t1, a0, a0
-    add a0, t1, a0
+    mul t3, a0, a0
+    add a0, t3, a0
     jr ra
 
 create_default_list:
